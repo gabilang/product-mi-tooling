@@ -37,6 +37,7 @@ export const miCategories = [
         { id: 'Carbon Applications', to: '/carbon-applications', icon: <CappIcon /> },
         { id: 'Log Files', to: '/log-files', icon: <LogFileIcon /> },
         { id: 'Registry Resources', to: '/registry-resources', icon: <RegistryIcon /> },
+        { id: 'Carbon Logs', to: '/carbon-logs', icon: <LogFileIcon /> },
       ],
     },
     {

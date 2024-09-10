@@ -208,6 +208,11 @@ export default class HTTPClient {
 
     }
 
+    static getCarbonLogs(groupId, nodeList) {
+        const resourcePath = `${groupId}/logs/carbon-logs?nodes=${this.getNodeListAsQueryParams(nodeList)}`
+        return this.getResource(resourcePath)
+    }
+
     static getPaginatedRegistryArtifacts(searchKey, lowerLimit, upperLimit,order, orderBy, groupId, path) {
         const resourcePath = `${groupId}/registry-resources?path=${path}&searchKey=${searchKey}&lowerLimit=${lowerLimit}&upperLimit=${upperLimit}&order=${order}&orderBy=${orderBy}`;
         return this.getResource(resourcePath)
