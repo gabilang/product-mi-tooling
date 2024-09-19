@@ -20,6 +20,8 @@
 
 package org.wso2.ei.dashboard.core.rest.api;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -224,6 +226,27 @@ public class GroupsApi {
         LogsDelegate logsDelegate = new LogsDelegate();
         String logContent = logsDelegate.getLogByName(groupId, nodeId, fileName);
         Response.ResponseBuilder responseBuilder = Response.ok().entity(logContent);
+        HttpUtils.setHeaders(responseBuilder);
+        return responseBuilder.build();
+    }
+
+    @GET
+    @Path("/{group-id}/logs/carbon-logs")
+    @Produces({ "text/plain" })
+    @Operation(summary = "Get carbon logs", description = "", tags={ "carbonLogs" })
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "JSON array of carbon logs",
+                     content = @Content(schema = @Schema(implementation = String.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error",
+                     content = @Content(schema = @Schema(implementation = Error.class)))
+    }) public Response getCarbonLogs(
+            @PathParam("group-id") @Parameter(description = "Group ID of the node") String groupId,
+            @NotNull  @QueryParam("nodes") @Parameter(description = "ID/IDs of the nodes")  List<String> nodes)
+                    throws ManagementApiException {
+        LogsDelegate logsDelegate = new LogsDelegate();
+        JsonArray logs = logsDelegate.getCarbonLogs(groupId, nodes);
+        String jsonString = new Gson().toJson(logs);
+        Response.ResponseBuilder responseBuilder = Response.ok().entity(jsonString);
         HttpUtils.setHeaders(responseBuilder);
         return responseBuilder.build();
     }

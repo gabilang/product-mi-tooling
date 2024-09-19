@@ -45,6 +45,7 @@ import DataServices from '../pages/DataServices';
 import Connectors from '../pages/Connectors';
 import CarbonApplications from '../pages/CarbonApplications';
 import LogFiles from '../pages/LogFiles'
+import CarbonLogs from '../pages/CarbonLogsView'
 import LogConfigs from '../pages/LogConfigs'
 import Users from '../pages/Users'
 import Roles from '../pages/Roles';
@@ -152,6 +153,7 @@ function Layout(props) {
                                 <Route exact path='/connectors' component={Connectors} />
                                 <Route exact path='/carbon-applications' component={CarbonApplications} />
                                 <Route exact path='/log-files' component={LogFiles} />
+                                <Route exact path='/carbon-logs' component={CarbonLogs}/>
                                 <Route exact path='/log-configs' component={LogConfigs}/>
                                 <Route exact path='/log-configs/add' component={AddLogConfig}/>
                                 <Route exact path='/users' component={Users}/>

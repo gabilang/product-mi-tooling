@@ -39,13 +39,11 @@ import org.wso2.ei.dashboard.core.rest.model.LogList;
 import org.wso2.ei.dashboard.core.rest.model.LogListInner;
 import org.wso2.ei.dashboard.core.rest.model.LogsResourceResponse;
 import org.wso2.ei.dashboard.micro.integrator.commons.DelegatesUtil;
+import org.wso2.ei.dashboard.micro.integrator.commons.LogsFormatter;
 import org.wso2.ei.dashboard.micro.integrator.commons.Utils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -205,5 +203,79 @@ public class LogsDelegate {
         } catch (IOException e) {
             throw new ManagementApiException("Error while retrieving logs", 500);
         }
+    }
+
+    public JsonArray getCarbonLogs(String groupId, List<String> nodes) throws ManagementApiException {
+        List<JsonArray> logs = new ArrayList<>();
+        for (String nodeId : nodes) {
+            System.out.println(getCarbonLogFileNamesByNode(groupId, nodeId));
+            JsonArray logsByNode = new JsonArray();
+            for (String logFileName : getCarbonLogFileNamesByNode(groupId, nodeId)) {
+                String logContent = getLogByName(groupId, nodeId, logFileName);
+                logsByNode.addAll(LogsFormatter.parseLogsAsJsonArray(logContent.split("\n"), nodeId));
+            }
+            logs.add(logsByNode);
+        }
+        return mergeLogsByTimestamp(logs);
+    }
+
+    public static JsonArray mergeLogsByTimestamp(List<JsonArray> logsList) {
+        JsonArray orderedJsonArray = new JsonArray();
+        PriorityQueue<ArrayNode> minHeap = new PriorityQueue<>();
+
+        for (int i = 0; i < logsList.size(); i++) {
+            minHeap.add(new ArrayNode(i, 0, logsList.get(i).get(0).getAsJsonArray()));
+        }
+
+        ArrayNode currentArrayNode;
+        while (!minHeap.isEmpty()) {
+            currentArrayNode = minHeap.poll();
+            orderedJsonArray.add(currentArrayNode.value);
+
+            if (currentArrayNode.innerArrayIndex < (logsList.get(currentArrayNode.outerArrayIndex).size() - 1)) {
+                minHeap.add(new ArrayNode(currentArrayNode.outerArrayIndex,
+                        currentArrayNode.innerArrayIndex + 1,
+                        logsList.get(currentArrayNode.outerArrayIndex).get(currentArrayNode.innerArrayIndex + 1)
+                                .getAsJsonArray()));
+            }
+        }
+        return orderedJsonArray;
+    }
+
+    private static class ArrayNode implements Comparable<ArrayNode> {
+        int outerArrayIndex;
+        int innerArrayIndex;
+        JsonArray value;
+
+        ArrayNode(int outerArrayIndex, int innerArrayIndex, JsonArray value) {
+            this.outerArrayIndex = outerArrayIndex;
+            this.innerArrayIndex = innerArrayIndex;
+            this.value = value;
+        }
+
+        @Override
+        public int compareTo(ArrayNode arrayNode) {
+            return Long.compare(this.value.get(1).getAsLong(), arrayNode.value.get(1).getAsLong());
+        }
+    }
+
+    private List<String> getCarbonLogFileNamesByNode(String groupId, String nodeId) throws ManagementApiException {
+        List<String> logFileNames = new ArrayList<>();
+        String mgtApiUrl = ManagementApiUtils.getMgtApiUrl(groupId, nodeId);
+        String accessToken = dataManager.getAccessToken(groupId, nodeId);
+        JsonArray logsArray = DelegatesUtil.getResourceResultList(groupId, nodeId, Constants.LOGS, mgtApiUrl,
+                accessToken, null);
+
+        for (JsonElement jsonElement : logsArray) {
+            JsonObject logObject =  (JsonObject) jsonElement;
+            String fileName = logObject.get("FileName").getAsString();
+            // Add a regex to filter out the log files with the name pattern wso2carbon-mm-dd-yyyy.log
+            if (fileName.matches("wso2carbon-\\d{2}-\\d{2}-\\d{4}.log")) {
+                logFileNames.add(fileName);
+            }
+        }
+        // arrange the entries in the ascending order of the file name
+        Collections.sort(logFileNames);
+        return logFileNames;
     }
 }
