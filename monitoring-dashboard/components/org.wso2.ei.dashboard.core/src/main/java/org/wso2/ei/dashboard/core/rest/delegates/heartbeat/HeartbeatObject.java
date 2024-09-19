@@ -30,15 +30,21 @@ public class HeartbeatObject {
     private Integer interval;
     private String mgtApiUrl;
     private long timestamp;
+    private long[] memoryMetrics;
+    private Integer threadCount;
+    private double[] cpuUsage;
 
-    public HeartbeatObject(
-            String product, String groupId, String nodeId, Integer interval, String mgtApiUrl, long timestamp) {
+    public HeartbeatObject(String product, String groupId, String nodeId, Integer interval, String mgtApiUrl,
+                           long[] memoryMetrics, Integer threadCount, double[] cpuUsage, long timestamp) {
 
         this.product = product;
         this.groupId = groupId;
         this.nodeId = nodeId;
         this.interval = interval;
         this.mgtApiUrl = mgtApiUrl;
+        this.memoryMetrics = memoryMetrics;
+        this.threadCount = threadCount;
+        this.cpuUsage = cpuUsage;
         this.timestamp = timestamp;
     }
 
@@ -100,5 +106,29 @@ public class HeartbeatObject {
     public void setTimestamp(long timestamp) {
 
         this.timestamp = timestamp;
+    }
+
+    public long[] getMemoryMetrics() {
+        return memoryMetrics;
+    }
+
+    public void setMemoryMetrics(long[] memoryMetrics) {
+        this.memoryMetrics = memoryMetrics;
+    }
+
+    public Integer getThreadCount() {
+        return threadCount;
+    }
+
+    public void setThreadCount(Integer threadCount) {
+        this.threadCount = threadCount;
+    }
+
+    public double[] getCpuUsage() {
+        return cpuUsage;
+    }
+
+    public void setCpuUsage(double[] cpuUsage) {
+        this.cpuUsage = cpuUsage;
     }
 }

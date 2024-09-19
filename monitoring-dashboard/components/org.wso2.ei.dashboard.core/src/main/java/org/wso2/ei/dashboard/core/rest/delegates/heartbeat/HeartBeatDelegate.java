@@ -23,7 +23,6 @@ package org.wso2.ei.dashboard.core.rest.delegates.heartbeat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.wso2.ei.dashboard.core.commons.Constants;
-import org.wso2.ei.dashboard.core.commons.utils.ManagementApiUtils;
 import org.wso2.ei.dashboard.core.data.manager.DataManager;
 import org.wso2.ei.dashboard.core.data.manager.DataManagerSingleton;
 import org.wso2.ei.dashboard.core.exception.DashboardServerException;
@@ -52,7 +51,8 @@ public class HeartBeatDelegate {
         Ack ack = new Ack(Constants.FAIL_STATUS);
         HeartbeatObject heartbeat = new HeartbeatObject(
                 heartbeatRequest.getProduct(), heartbeatRequest.getGroupId(), heartbeatRequest.getNodeId(),
-                heartbeatRequest.getInterval(), heartbeatRequest.getMgtApiUrl(), currentTimestamp);
+                heartbeatRequest.getInterval(), heartbeatRequest.getMgtApiUrl(), heartbeatRequest.getMemoryMetrics(),
+                heartbeatRequest.getThreadCount(), heartbeatRequest.getCpuUsage(), currentTimestamp);
         if (logger.isDebugEnabled()) {
             logger.debug("Management API URL received is: " + heartbeat.getMgtApiUrl());
         }
