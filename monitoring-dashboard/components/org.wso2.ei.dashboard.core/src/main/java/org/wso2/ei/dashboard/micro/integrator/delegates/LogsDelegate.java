@@ -263,8 +263,8 @@ public class LogsDelegate {
         List<String> logFileNames = new ArrayList<>();
         String mgtApiUrl = ManagementApiUtils.getMgtApiUrl(groupId, nodeId);
         String accessToken = dataManager.getAccessToken(groupId, nodeId);
-        JsonArray logsArray = DelegatesUtil.getResourceResultList(groupId, nodeId,
-                Constants.LOGS, mgtApiUrl, accessToken, null);
+        JsonArray logsArray = DelegatesUtil.getResourceResultList(groupId, nodeId, Constants.LOGS, mgtApiUrl,
+                accessToken, null);
 
         for (JsonElement jsonElement : logsArray) {
             JsonObject logObject =  (JsonObject) jsonElement;
