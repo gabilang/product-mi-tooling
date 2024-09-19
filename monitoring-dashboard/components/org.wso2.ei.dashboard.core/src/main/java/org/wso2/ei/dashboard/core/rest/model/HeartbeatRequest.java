@@ -22,6 +22,8 @@ import javax.validation.Valid;
 
 
 import io.swagger.annotations.*;
+
+import java.util.Arrays;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -32,6 +34,9 @@ public class HeartbeatRequest   {
   private @Valid String nodeId = null;
   private @Valid Integer interval = null;
   private @Valid String mgtApiUrl = null;
+  private @Valid long[] memoryMetrics = null;
+  private @Valid Integer threadCount = null;
+  private @Valid double[] cpuUsage = null;
 
   /**
    **/
@@ -123,6 +128,51 @@ public class HeartbeatRequest   {
     this.mgtApiUrl = mgtApiUrl;
   }
 
+  public HeartbeatRequest memoryMetrics(long[] memoryMetrics) {
+      this.memoryMetrics = memoryMetrics;
+      return this;
+  }
+
+  @ApiModelProperty(value = "")
+  @JsonProperty("memoryMetrics")
+  public long[] getMemoryMetrics() {
+      return memoryMetrics;
+  }
+
+  public void setMemoryMetrics(long[] memoryMetrics) {
+      this.memoryMetrics = memoryMetrics;
+  }
+
+  public HeartbeatRequest threadCount(Integer threadCount) {
+      this.threadCount = threadCount;
+      return this;
+  }
+
+  @ApiModelProperty(value = "")
+  @JsonProperty("threadCount")
+  public Integer getThreadCount() {
+      return threadCount;
+  }
+
+  public void setThreadCount(Integer threadCount) {
+      this.threadCount = threadCount;
+  }
+
+  public HeartbeatRequest cpuUsage(double[] cpuUsage) {
+    this.cpuUsage = cpuUsage;
+    return this;
+  }
+
+  @ApiModelProperty(value = "")
+  @JsonProperty("cpuUsage")
+  public double[] getCpuUsage() {
+    return cpuUsage;
+  }
+
+  public void setCpuUsage(double[] cpuUsage) {
+    this.cpuUsage = cpuUsage;
+  }
+
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -133,29 +183,34 @@ public class HeartbeatRequest   {
     }
     HeartbeatRequest heartbeatRequest = (HeartbeatRequest) o;
     return Objects.equals(product, heartbeatRequest.product) &&
-           Objects.equals(groupId, heartbeatRequest.groupId) &&
-           Objects.equals(nodeId, heartbeatRequest.nodeId) &&
-           Objects.equals(interval, heartbeatRequest.interval) &&
-           Objects.equals(mgtApiUrl, heartbeatRequest.mgtApiUrl);
+            Objects.equals(groupId, heartbeatRequest.groupId) &&
+            Objects.equals(nodeId, heartbeatRequest.nodeId) &&
+            Objects.equals(interval, heartbeatRequest.interval) &&
+            Objects.equals(mgtApiUrl, heartbeatRequest.mgtApiUrl) &&
+            Arrays.equals(memoryMetrics, heartbeatRequest.memoryMetrics) &&
+            Objects.equals(threadCount, heartbeatRequest.threadCount) &&
+            Arrays.equals(cpuUsage, heartbeatRequest.cpuUsage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(product, groupId, nodeId, interval, mgtApiUrl);
+    int result = Objects.hash(product, groupId, nodeId, interval, mgtApiUrl, threadCount);
+    result = 31 * result + Arrays.hashCode(memoryMetrics) + Arrays.hashCode(cpuUsage);
+    return result;
   }
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class HeartbeatRequest {\n");
-
-    sb.append("    product: ").append(toIndentedString(product)).append("\n");
-    sb.append("    groupId: ").append(toIndentedString(groupId)).append("\n");
-    sb.append("    nodeId: ").append(toIndentedString(nodeId)).append("\n");
-    sb.append("    interval: ").append(toIndentedString(interval)).append("\n");
-    sb.append("    mgtApiUrl: ").append(toIndentedString(mgtApiUrl)).append("\n");
-    sb.append("}");
-    return sb.toString();
+      return "class HeartbeatRequest {\n" +
+              "    product: " + toIndentedString(product) + "\n" +
+              "    groupId: " + toIndentedString(groupId) + "\n" +
+              "    nodeId: " + toIndentedString(nodeId) + "\n" +
+              "    interval: " + toIndentedString(interval) + "\n" +
+              "    mgtApiUrl: " + toIndentedString(mgtApiUrl) + "\n" +
+              "    memoryMetrics: " + Arrays.toString(memoryMetrics) + "\n" +
+              "    threadCount: " + toIndentedString(threadCount) + "\n" +
+              "    cpuUsage: " + Arrays.toString(cpuUsage) + "\n" +
+              "}";
   }
 
   /**
